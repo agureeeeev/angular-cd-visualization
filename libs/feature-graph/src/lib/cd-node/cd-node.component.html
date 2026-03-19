@@ -1,0 +1,17 @@
+<!-- Невидимый триггер проверки шаблона -->
+{{ trackRender() }}
+
+<div class="node-card" [class.node-card--onpush]="strategy() === 'OnPush'">
+    <header class="node-card__header">
+        <span class="node-card__id">{{ nodeId() }}</span>
+        <span tuiBadge [appearance]="strategy() === 'OnPush' ? 'primary' : 'neutral'" size="s">
+          {{ strategy() }}
+        </span>
+    </header>
+
+    <p class="node-card__label">{{ label() }}</p>
+
+    <footer class="node-card__footer">
+        <span class="node-card__count">CD Node Demo</span>
+    </footer>
+</div>

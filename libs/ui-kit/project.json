@@ -1,0 +1,16 @@
+{
+    "$schema": "../../node_modules/nx/schemas/project-schema.json",
+    "name": "ui-kit",
+    "projectType": "library",
+    "sourceRoot": "libs/ui-kit/src",
+    "prefix": "cd-viz",
+    "targets": {
+        "lint": {
+            "executor": "@nx/eslint:lint"
+        }
+    },
+    "tags": [
+        "scope:shared",
+        "type:ui"
+    ]
+}

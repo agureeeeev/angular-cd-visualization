@@ -1,0 +1,15 @@
+{
+    "extends": "../../tsconfig.base.json",
+    "angularCompilerOptions": {
+        "enableI18nLegacyMessageIdFormat": false,
+        "strictInjectionParameters": true,
+        "strictInputAccessModifiers": true,
+        "strictTemplates": true
+    },
+    "compilerOptions": {
+        "outDir": "../../../dist/out-tsc"
+    },
+    "include": [
+        "src/**/*.ts"
+    ]
+}

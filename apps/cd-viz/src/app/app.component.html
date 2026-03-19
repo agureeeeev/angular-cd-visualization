@@ -1,0 +1,41 @@
+<tui-root>
+    <div class="app-layout">
+        <!-- Левая колонка -->
+        <div class="app-left">
+            <!-- Холст Cytoscape -->
+            <div class="graph-panel">
+                <cd-graph #graphRef />
+            </div>
+
+            <!-- Карточки демонстрационных нод -->
+            <div class="nodes-row">
+                <cd-node
+                    #nodeA
+                    nodeId="node-a"
+                    label="Node A — Default CD"
+                    strategy="Default"
+                />
+                <cd-node
+                    #nodeB
+                    nodeId="node-b"
+                    [label]="nodeBLabel()"
+                    [strategy]="strategyDynamic()"
+                />
+                <cd-node
+                    #nodeC
+                    nodeId="node-c"
+                    label="Node C — Default CD"
+                    strategy="Default"
+                />
+            </div>
+        </div>
+
+        <!-- Правая колонка (панель управления) -->
+        <aside class="app-right">
+            <cd-control-panel
+                    (triggerEvent)="onTriggerEvent($event)"
+                    (strategyChange)="onStrategyChange($event)"
+            />
+        </aside>
+    </div>
+</tui-root>

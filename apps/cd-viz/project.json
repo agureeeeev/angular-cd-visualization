@@ -1,0 +1,70 @@
+{
+    "$schema": "../../node_modules/nx/schemas/project-schema.json",
+    "name": "cd-viz",
+    "projectType": "application",
+    "sourceRoot": "apps/cd-viz/src",
+    "prefix": "app",
+    "targets": {
+        "build": {
+            "executor": "@angular-devkit/build-angular:application",
+            "outputs": [
+                "{options.outputPath}"
+            ],
+            "options": {
+                "outputPath": "dist/apps/cd-viz",
+                "index": "apps/cd-viz/src/index.html",
+                "browser": "apps/cd-viz/src/main.ts",
+                "polyfills": [],
+                "tsConfig": "apps/cd-viz/tsconfig.app.json",
+                "assets": [],
+                "styles": [
+                    "@taiga-ui/core/styles/taiga-ui-theme.less",
+                    "@taiga-ui/core/styles/taiga-ui-fonts.less",
+                    "apps/cd-viz/src/styles.scss"
+                ],
+                "scripts": []
+            },
+            "configurations": {
+                "production": {
+                    "budgets": [
+                        {
+                            "type": "initial",
+                            "maximumWarning": "500kB",
+                            "maximumError": "1MB"
+                        },
+                        {
+                            "type": "anyComponentStyle",
+                            "maximumWarning": "2kB",
+                            "maximumError": "4kB"
+                        }
+                    ],
+                    "outputHashing": "all"
+                },
+                "development": {
+                    "optimization": false,
+                    "extractLicenses": false,
+                    "sourceMap": true
+                }
+            },
+            "defaultConfiguration": "production"
+        },
+        "serve": {
+            "executor": "@angular-devkit/build-angular:dev-server",
+            "configurations": {
+                "production": {
+                    "buildTarget": "cd-viz:build:production"
+                },
+                "development": {
+                    "buildTarget": "cd-viz:build:development"
+                }
+            },
+            "defaultConfiguration": "development"
+        },
+        "lint": {
+            "executor": "@nx/eslint:lint"
+        }
+    },
+    "tags": [
+        "scope:app"
+    ]
+}

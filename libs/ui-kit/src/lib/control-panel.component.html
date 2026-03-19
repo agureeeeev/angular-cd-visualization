@@ -1,0 +1,111 @@
+<section class="panel">
+    <!-- Header -->
+    <header class="panel__header">
+        <div>
+            <h2 class="panel__title">Control Panel</h2>
+            <div class="panel__subtitle">Angular Change Detection</div>
+        </div>
+        @if (tracker.events().length > 0) {
+            <tui-badge-notification>{{ tracker.events().length }}</tui-badge-notification>
+        }
+    </header>
+
+    <!-- Strategy toggle -->
+    <div class="panel__section">
+        <p class="panel__label">Strategy</p>
+        <div class="panel__btn-group">
+            <button
+                    tuiButton
+                    size="s"
+                    [appearance]="currentStrategy() === 'Default' ? 'primary' : 'glass'"
+                    (click)="setStrategy('Default')"
+            >
+                Default
+            </button>
+            <button
+                    tuiButton
+                    size="s"
+                    [appearance]="currentStrategy() === 'OnPush' ? 'primary' : 'glass'"
+                    (click)="setStrategy('OnPush')"
+            >
+                OnPush
+            </button>
+        </div>
+    </div>
+
+    <!-- Event triggers -->
+    <div class="panel__section">
+        <p class="panel__label">Trigger Event</p>
+        <div class="panel__btn-group panel__btn-group--col">
+            <button tuiButton size="s" appearance="glass" (click)="triggerEvent.emit('dom')">
+                🖱 DOM Event
+            </button>
+            <button tuiButton size="s" appearance="glass"
+                    (click)="triggerEvent.emit('promise')">
+                ⏳ Promise
+            </button>
+            <button tuiButton size="s" appearance="glass" (click)="triggerEvent.emit('signal')">
+                ⚡ Signal Update
+            </button>
+            <!-- Clear -->
+            <button tuiButton size="xs" appearance="destructive" (click)="clearHistory()">
+                Clear History
+            </button>
+        </div>
+    </div>
+
+    <!-- Event log -->
+    <div class="panel__section panel__log-wrapper">
+        <p class="panel__label">
+            Live CD Events
+            @if (tracker.visibleEvents().length > 0) {
+                <span class="panel__label-count">({{ tracker.visibleEvents().length }})</span>
+            }
+        </p>
+
+        <!-- Легенда цветов -->
+        <ul class="panel__legend">
+            <li class="panel__legend-item">
+                <span class="panel__legend-dot" style="background:#3b82f6"></span>
+                <span>🖱 DOM Event — клик, ввод и т.п.</span>
+            </li>
+            <li class="panel__legend-item">
+                <span class="panel__legend-dot" style="background:#f59e0b"></span>
+                <span>⏳ Promise — завершение async-задачи</span>
+            </li>
+            <li class="panel__legend-item">
+                <span class="panel__legend-dot" style="background:#22c55e"></span>
+                <span>⚡ Signal — обновление сигнала</span>
+            </li>
+            <li class="panel__legend-item">
+                <span class="panel__legend-dot" style="background:#64748b"></span>
+                <span>🔄 Render — проход CD без явного триггера</span>
+            </li>
+            <li class="panel__legend-item">
+                <span class="panel__legend-dot" style="background:#160f29; border:1.5px solid #7c3aed"></span>
+                <span>Тёмный фон — стратегия OnPush</span>
+            </li>
+        </ul>
+        <ul class="panel__log">
+            @for (evt of reversedEvents(); track evt.timestamp) {
+                <li
+                        class="panel__log-entry"
+                        [class.panel__log-entry--onpush]="evt.strategy === 'OnPush'"
+                        [style.--trigger-color]="triggerColor(evt.trigger)"
+                >
+                    <span class="panel__log-icon">{{ triggerIcon(evt.trigger) }}</span>
+                    <span class="panel__log-node">{{ evt.nodeId }}</span>
+                    <span class="panel__log-badges">
+                        <span class="panel__log-badge panel__log-badge--trigger">{{ evt.trigger }}</span>
+                        <span
+                                class="panel__log-badge"
+                                [class.panel__log-badge--onpush]="evt.strategy === 'OnPush'"
+                        >{{ evt.strategy }}</span>
+                    </span>
+                </li>
+            } @empty {
+                <li class="panel__log-empty">No events yet — trigger one above.</li>
+            }
+        </ul>
+    </div>
+</section>

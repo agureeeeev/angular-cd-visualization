@@ -1,0 +1,49 @@
+/* ── Глобальный сброс стилей ─────────────────────────────────── */
+:host {
+  display: block;
+  height: 100vh;
+  background: #0f172a;
+  font-family: Roboto, sans-serif;
+}
+
+tui-root {
+  height: 100%;
+}
+
+/* ── Основной макет ───────────────────────────────────────────── */
+.app-layout {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 16px;
+  height: 100%;
+  padding: 16px;
+  box-sizing: border-box;
+}
+
+.app-left {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-height: 0;
+}
+
+/* ── Панель графа ─────────────────────────────────────────────── */
+.graph-panel {
+  flex: 1;
+  min-height: 0;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+/* ── Строка с карточками нод ────────────────────────────────── */
+.nodes-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+/* ── Правая боковая панель ──────────────────────────────────── */
+.app-right {
+  min-height: 0;
+  overflow: hidden;
+}
