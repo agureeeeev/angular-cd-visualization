@@ -5,9 +5,11 @@ import {
     inject,
     input,
     untracked,
+    contentChildren,
+    forwardRef
 } from '@angular/core';
-import {CdStrategy, CdTrackerService, EventTrigger} from '@cd-viz/data-access';
-import {TuiBadge} from '@taiga-ui/kit';
+import { CdStrategy, CdTrackerService, EventTrigger } from '@cd-viz/data-access';
+import { TuiBadge } from '@taiga-ui/kit';
 
 /**
  * `CdNodeComponent` — подписанная нода-лист внутри демонстрационного дерева компонентов.
@@ -37,6 +39,8 @@ export class CdNodeComponent {
     readonly strategy = input<CdStrategy>('Default');
 
     // ── Внутреннее состояние ──────────────────────────────────────────────────────
+    readonly children = contentChildren<CdNodeComponent>(forwardRef(() => CdNodeComponent));
+
     /** Временный маркер, чтобы передать причину рендера из `simulateTrigger` в `trackRender` */
     private _activeTrigger: EventTrigger | null = null;
 
@@ -77,6 +81,16 @@ export class CdNodeComponent {
                     label: this.label(),
                     strategy: this.strategy(),
                     trigger,
+                });
+
+                // Эмуляция естественного погружения Change Detection.
+                // Так как технически все CdNodeComponent являются OnPush,
+                // нам нужно руками "протолкнуть" цикл CD в те дочерние компоненты,
+                // чья логическая стратегия = Default (то, что Angular сделал бы сам).
+                this.children().forEach(child => {
+                    if (child.strategy() === 'Default') {
+                        child.simulateTrigger('render');
+                    }
                 });
             });
         });

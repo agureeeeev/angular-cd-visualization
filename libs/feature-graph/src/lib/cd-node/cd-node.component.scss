@@ -44,3 +44,16 @@
 .node-card__trigger {
   font-style: italic;
 }
+
+.node-card__children {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px dashed #334155;
+}
+
+.node-card__children:empty {
+  display: none;
+}

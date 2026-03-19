@@ -5,7 +5,7 @@
     <header class="node-card__header">
         <span class="node-card__id">{{ nodeId() }}</span>
         <span tuiBadge [appearance]="strategy() === 'OnPush' ? 'primary' : 'neutral'" size="s">
-          {{ strategy() }}
+            {{ strategy() }}
         </span>
     </header>
 
@@ -14,4 +14,8 @@
     <footer class="node-card__footer">
         <span class="node-card__count">CD Node Demo</span>
     </footer>
+
+    <div class="node-card__children">
+        <ng-content></ng-content>
+    </div>
 </div>

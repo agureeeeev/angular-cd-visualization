@@ -10,25 +10,55 @@ import {
     ElementRef,
 } from '@angular/core';
 import cytoscape, { Core, NodeDefinition, EdgeDefinition, StylesheetStyle } from 'cytoscape';
+import cytoscapeDagre from 'cytoscape-dagre';
 import { CdEvent, CdStrategy, CdTrackerService } from '@cd-viz/data-access';
+
+cytoscape.use(cytoscapeDagre);
 
 // ─── Статическое определение графа ───────────────────────────────────────────
 
 const INITIAL_NODES: NodeDefinition[] = [
     { data: { id: 'app', label: 'AppComponent', strategy: 'Default' } },
-    { data: { id: 'graph', label: 'GraphComponent', strategy: 'Default' } },
+    { data: { id: 'graph1', label: 'GraphComponent 1', strategy: 'Default' } },
+    { data: { id: 'graph2', label: 'GraphComponent 2', strategy: 'Default' } },
     { data: { id: 'panel', label: 'ControlPanel', strategy: 'Default' } },
     { data: { id: 'node-a', label: 'CdNode A', strategy: 'Default' } },
+    { data: { id: 'node-a-1', label: 'Node A.1', strategy: 'Default' } },
+    { data: { id: 'node-a-2', label: 'Node A.2', strategy: 'OnPush' } },
     { data: { id: 'node-b', label: 'CdNode B', strategy: 'OnPush' } },
+    { data: { id: 'node-b-1', label: 'Node B.1', strategy: 'Default' } },
+    { data: { id: 'node-b-1-1', label: 'Node B.1.1', strategy: 'Default' } },
+    { data: { id: 'node-b-2', label: 'Node B.2', strategy: 'OnPush' } },
+    { data: { id: 'node-b-2-1', label: 'Node B.2.1', strategy: 'Default' } },
     { data: { id: 'node-c', label: 'CdNode C', strategy: 'Default' } },
+    { data: { id: 'node-c-1', label: 'Node C.1', strategy: 'OnPush' } },
+    { data: { id: 'node-c-2', label: 'Node C.2', strategy: 'Default' } },
+
+    // Graph 2 Nodes
+    { data: { id: 'node2-a', label: 'CdNode 2.A', strategy: 'Default' } },
+    { data: { id: 'node2-b', label: 'CdNode 2.B', strategy: 'OnPush' } },
+    { data: { id: 'node2-c', label: 'CdNode 2.C', strategy: 'Default' } },
 ];
 
 const INITIAL_EDGES: EdgeDefinition[] = [
-    { data: { id: 'e1', source: 'app', target: 'graph' } },
+    { data: { id: 'e1', source: 'app', target: 'graph1' } },
+    { data: { id: 'e_g2', source: 'app', target: 'graph2' } },
     { data: { id: 'e2', source: 'app', target: 'panel' } },
-    { data: { id: 'e3', source: 'graph', target: 'node-a' } },
-    { data: { id: 'e4', source: 'graph', target: 'node-b' } },
-    { data: { id: 'e5', source: 'graph', target: 'node-c' } },
+    { data: { id: 'e3', source: 'graph1', target: 'node-a' } },
+    { data: { id: 'e4', source: 'graph1', target: 'node-b' } },
+    { data: { id: 'e5', source: 'graph1', target: 'node-c' } },
+    { data: { id: 'e6', source: 'node-b', target: 'node-b-1' } },
+    { data: { id: 'e7', source: 'node-b', target: 'node-b-2' } },
+    { data: { id: 'e8', source: 'node-a', target: 'node-a-1' } },
+    { data: { id: 'e9', source: 'node-a', target: 'node-a-2' } },
+    { data: { id: 'e10', source: 'node-b-1', target: 'node-b-1-1' } },
+    { data: { id: 'e11', source: 'node-b-2', target: 'node-b-2-1' } },
+    { data: { id: 'e12', source: 'node-c', target: 'node-c-1' } },
+    { data: { id: 'e13', source: 'node-c', target: 'node-c-2' } },
+
+    { data: { id: 'e2-3', source: 'graph2', target: 'node2-a' } },
+    { data: { id: 'e2-4', source: 'graph2', target: 'node2-b' } },
+    { data: { id: 'e2-5', source: 'graph2', target: 'node2-c' } },
 ];
 
 const CY_STYLES: StylesheetStyle[] = [
@@ -154,11 +184,12 @@ export class GraphComponent implements OnDestroy {
             },
             style: CY_STYLES,
             layout: {
-                name: 'breadthfirst',
-                directed: true,
-                roots: '#app',
-                padding: 20,
-                spacingFactor: 1.4,
+                name: 'dagre',
+                rankDir: 'TB',
+                nodeSep: 40,
+                rankSep: 60,
+                padding: 30,
+                fit: true,
             } as cytoscape.LayoutOptions,
             userZoomingEnabled: true,
             userPanningEnabled: true,
