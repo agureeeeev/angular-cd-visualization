@@ -8,7 +8,10 @@ import {
     signal,
     viewChild,
     ElementRef,
+    DestroyRef,
+    untracked,
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import cytoscape, { Core, NodeDefinition, EdgeDefinition, StylesheetStyle } from 'cytoscape';
 import cytoscapeDagre from 'cytoscape-dagre';
 import { CdEvent, CdStrategy, CdTrackerService } from '@cd-viz/data-access';
@@ -22,22 +25,22 @@ const INITIAL_NODES: NodeDefinition[] = [
     { data: { id: 'graph1', label: 'GraphComponent 1', strategy: 'Default' } },
     { data: { id: 'graph2', label: 'GraphComponent 2', strategy: 'Default' } },
     { data: { id: 'panel', label: 'ControlPanel', strategy: 'Default' } },
-    { data: { id: 'node-a', label: 'CdNode A', strategy: 'Default' } },
+    { data: { id: 'node-a', label: 'Node A', strategy: 'Default' } },
     { data: { id: 'node-a-1', label: 'Node A.1', strategy: 'Default' } },
     { data: { id: 'node-a-2', label: 'Node A.2', strategy: 'OnPush' } },
-    { data: { id: 'node-b', label: 'CdNode B', strategy: 'OnPush' } },
+    { data: { id: 'node-b', label: 'Node B', strategy: 'OnPush' } },
     { data: { id: 'node-b-1', label: 'Node B.1', strategy: 'Default' } },
     { data: { id: 'node-b-1-1', label: 'Node B.1.1', strategy: 'Default' } },
     { data: { id: 'node-b-2', label: 'Node B.2', strategy: 'OnPush' } },
     { data: { id: 'node-b-2-1', label: 'Node B.2.1', strategy: 'Default' } },
-    { data: { id: 'node-c', label: 'CdNode C', strategy: 'Default' } },
+    { data: { id: 'node-c', label: 'Node C', strategy: 'Default' } },
     { data: { id: 'node-c-1', label: 'Node C.1', strategy: 'OnPush' } },
     { data: { id: 'node-c-2', label: 'Node C.2', strategy: 'Default' } },
 
     // Graph 2 Nodes
-    { data: { id: 'node2-a', label: 'CdNode 2.A', strategy: 'Default' } },
-    { data: { id: 'node2-b', label: 'CdNode 2.B', strategy: 'OnPush' } },
-    { data: { id: 'node2-c', label: 'CdNode 2.C', strategy: 'Default' } },
+    { data: { id: 'node2-a', label: 'Node 2.A', strategy: 'Default' } },
+    { data: { id: 'node2-b', label: 'Node 2.B', strategy: 'OnPush' } },
+    { data: { id: 'node2-c', label: 'Node 2.C', strategy: 'Default' } },
 ];
 
 const INITIAL_EDGES: EdgeDefinition[] = [
@@ -112,6 +115,12 @@ const CY_STYLES: StylesheetStyle[] = [
             'curve-style': 'bezier',
         },
     },
+    {
+        selector: '.hidden',
+        style: {
+            display: 'none',
+        } as Record<string, unknown>,
+    },
 ];
 
 // ─── Компонент ───────────────────────────────────────────────────────────────
@@ -129,12 +138,12 @@ const CY_STYLES: StylesheetStyle[] = [
 @Component({
     selector: 'cd-graph',
     standalone: true,
-    changeDetection: ChangeDetectionStrategy.OnPush,
     templateUrl: './graph.component.html',
     styleUrl: './graph.component.scss',
 })
 export class GraphComponent implements OnDestroy {
     private readonly tracker = inject(CdTrackerService);
+    private readonly destroyRef = inject(DestroyRef);
     private cy: Core | null = null;
     private readonly flashTimers = new Map<string, ReturnType<typeof setTimeout>>();
 
@@ -157,6 +166,18 @@ export class GraphComponent implements OnDestroy {
                 this.highlightNode(event);
             }
         });
+
+        this.tracker.strategyChanges$
+            .pipe(takeUntilDestroyed(this.destroyRef))
+            .subscribe(({ nodeId, strategy }) => {
+                this.setNodeStrategy(nodeId, strategy);
+            });
+
+        this.tracker.visibilityChanges$
+            .pipe(takeUntilDestroyed(this.destroyRef))
+            .subscribe(({ nodeId, isVisible }) => {
+                this.setNodeVisibility(nodeId, isVisible);
+            });
     }
 
     // ── Публичное API (вызывается родителем / тестами) ───────────────────────────
@@ -170,6 +191,18 @@ export class GraphComponent implements OnDestroy {
             node.addClass('onpush');
         } else {
             node.removeClass('onpush');
+        }
+    }
+
+    setNodeVisibility(nodeId: string, isVisible: boolean): void {
+        if (!this.cy) return;
+        const node = this.cy.$(`#${nodeId}`);
+        const successors = node.successors(); // Gets descendants and edges
+
+        if (isVisible) {
+            successors.removeClass('hidden');
+        } else {
+            successors.addClass('hidden');
         }
     }
 
@@ -231,5 +264,20 @@ export class GraphComponent implements OnDestroy {
         this.flashTimers.forEach(t => clearTimeout(t));
         this.cy?.destroy();
         this.cy = null;
+    }
+
+    protected trackRender(): string {
+        if (!this.tracker.startTrackingNode('graph1')) return '';
+        Promise.resolve().then(() => {
+            untracked(() => {
+                this.tracker.push({
+                    nodeId: 'graph1',
+                    label: 'GraphComponent 1',
+                    strategy: 'Default',
+                    trigger: 'render',
+                });
+            });
+        });
+        return '';
     }
 }

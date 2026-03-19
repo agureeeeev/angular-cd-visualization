@@ -1,8 +1,9 @@
 import { Injectable, computed, signal } from '@angular/core';
+import { Subject } from 'rxjs';
 
 // ─── Domain types ─────────────────────────────────────────────────────────────
 
-export type EventTrigger = 'dom' | 'promise' | 'signal' | 'render';
+export type EventTrigger = 'dom' | 'promise' | 'signal' | 'render' | 'bootstrap';
 export type CdStrategy = 'Default' | 'OnPush';
 
 export interface CdEvent {
@@ -26,7 +27,7 @@ export interface CdEvent {
  */
 @Injectable({ providedIn: 'root' })
 export class CdTrackerService {
-  private static readonly REVEAL_INTERVAL = 800; // ms between each revealed event
+  private static readonly REVEAL_INTERVAL = 750; // ms between each revealed event
   private static readonly MAX_VISIBLE = 30;       // keep at most this many in the log
 
   private readonly _allEvents = signal<CdEvent[]>([]);
@@ -48,13 +49,36 @@ export class CdTrackerService {
     return evts.length > 0 ? evts[evts.length - 1] : null;
   });
 
+  readonly strategyChanges$ = new Subject<{ nodeId: string, strategy: CdStrategy }>();
+  readonly visibilityChanges$ = new Subject<{ nodeId: string, isVisible: boolean }>();
+
   // ── Публичное API ──────────────────────────────────────────────────────────
 
-  /** Нереактивное поле для передачи причины текущего цикла CD компонентам */
   currentTrigger: EventTrigger | null = null;
+  private _isTrackingActive = false;
+  get isTrackingActive(): boolean { return this._isTrackingActive; }
+  private _trackedThisCycle = new Set<string>();
+
+  startCycle(trigger: EventTrigger): void {
+    this.currentTrigger = trigger;
+    this._isTrackingActive = true;
+    this._trackedThisCycle.clear();
+    setTimeout(() => {
+      this._isTrackingActive = false;
+      this.currentTrigger = null;
+      this._trackedThisCycle.clear();
+    });
+  }
+
+  startTrackingNode(nodeId: string): boolean {
+    if (!this._isTrackingActive) return false;
+    if (this._trackedThisCycle.has(nodeId)) return false;
+    this._trackedThisCycle.add(nodeId);
+    return true;
+  }
 
   push(event: Omit<CdEvent, 'timestamp' | 'trigger'> & { trigger?: EventTrigger }): void {
-    if (this._suppressing) return;
+    if (this._suppressing || !this._isTrackingActive) return;
 
     const fullEvent: CdEvent = {
       ...event,
@@ -68,6 +92,14 @@ export class CdTrackerService {
     // Помещаем в очередь для постепенного визуального отображения
     this._queue.push(fullEvent);
     this._startDrain();
+  }
+
+  notifyStrategyChange(nodeId: string, strategy: CdStrategy): void {
+    this.strategyChanges$.next({ nodeId, strategy });
+  }
+
+  notifyVisibilityChange(nodeId: string, isVisible: boolean): void {
+    this.visibilityChanges$.next({ nodeId, isVisible });
   }
 
   clear(): void {

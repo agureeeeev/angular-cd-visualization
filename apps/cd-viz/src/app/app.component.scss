@@ -13,7 +13,7 @@ tui-root {
 /* ── Основной макет ───────────────────────────────────────────── */
 .app-layout {
   display: grid;
-  grid-template-columns: 1fr 340px;
+  grid-template-columns: 1fr 400px;
   gap: 16px;
   height: 100%;
   padding: 16px;
@@ -53,6 +53,7 @@ tui-root {
 
 /* ── Правая боковая панель ──────────────────────────────────── */
 .app-right {
+  min-width: 400px;
   min-height: 0;
   overflow: hidden;
 }
