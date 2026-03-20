@@ -1,5 +1,7 @@
 # Визуализация Change Detection в Angular
 
+[🚀 **Запустить приложение онлайн (Live Demo)**](https://agureeeeev.github.io/angular-cd-visualization/)
+
 Пет-проект, который в реальном времени демонстрирует, как работает механизм обнаружения изменений (Change Detection) в Angular, используя Cytoscape.js, Сигналы и компоненты Taiga UI.
 
 ## Особенности
