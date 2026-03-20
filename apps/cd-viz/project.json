@@ -22,15 +22,19 @@
                     "@taiga-ui/core/styles/taiga-ui-fonts.less",
                     "apps/cd-viz/src/styles.scss"
                 ],
-                "scripts": []
+                "scripts": [],
+                "allowedCommonJsDependencies": [
+                    "@antv/g6",
+                    "@antv/util"
+                ]
             },
             "configurations": {
                 "production": {
                     "budgets": [
                         {
                             "type": "initial",
-                            "maximumWarning": "1.5MB",
-                            "maximumError": "2MB"
+                            "maximumWarning": "2.5MB",
+                            "maximumError": "3MB"
                         },
                         {
                             "type": "anyComponentStyle",
