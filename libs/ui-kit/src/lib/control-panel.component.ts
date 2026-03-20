@@ -6,7 +6,6 @@ import {
 } from '@angular/core';
 import { CdStrategy, CdTrackerService, EventTrigger } from '@cd-viz/data-access';
 import { TuiButton } from '@taiga-ui/core';
-import { TuiBadgeNotification } from '@taiga-ui/kit';
 
 const TRIGGER_ICON: Record<string, string> = {
   dom: '🖱',
@@ -30,7 +29,7 @@ const TRIGGER_COLOR: Record<EventTrigger, string> = {
 @Component({
   selector: 'cd-control-panel',
   standalone: true,
-  imports: [TuiButton, TuiBadgeNotification],
+  imports: [TuiButton],
   templateUrl: './control-panel.component.html',
   styleUrl: './control-panel.component.scss',
 })
