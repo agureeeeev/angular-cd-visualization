@@ -1,5 +1,4 @@
 import {
-    ChangeDetectionStrategy,
     Component,
     OnDestroy,
     afterNextRender,
@@ -12,127 +11,63 @@ import {
     untracked,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import cytoscape, { Core, NodeDefinition, EdgeDefinition, StylesheetStyle } from 'cytoscape';
-import cytoscapeDagre from 'cytoscape-dagre';
+import G6, { Graph } from '@antv/g6';
 import { CdEvent, CdStrategy, CdTrackerService } from '@cd-viz/data-access';
-
-cytoscape.use(cytoscapeDagre);
 
 // ─── Статическое определение графа ───────────────────────────────────────────
 
-const INITIAL_NODES: NodeDefinition[] = [
-    { data: { id: 'app', label: 'AppComponent', strategy: 'Default' } },
-    { data: { id: 'graph1', label: 'GraphComponent 1', strategy: 'Default' } },
-    { data: { id: 'graph2', label: 'GraphComponent 2', strategy: 'Default' } },
-    { data: { id: 'panel', label: 'ControlPanel', strategy: 'Default' } },
-    { data: { id: 'node-a', label: 'Node A', strategy: 'Default' } },
-    { data: { id: 'node-a-1', label: 'Node A.1', strategy: 'Default' } },
-    { data: { id: 'node-a-2', label: 'Node A.2', strategy: 'OnPush' } },
-    { data: { id: 'node-b', label: 'Node B', strategy: 'OnPush' } },
-    { data: { id: 'node-b-1', label: 'Node B.1', strategy: 'Default' } },
-    { data: { id: 'node-b-1-1', label: 'Node B.1.1', strategy: 'Default' } },
-    { data: { id: 'node-b-2', label: 'Node B.2', strategy: 'OnPush' } },
-    { data: { id: 'node-b-2-1', label: 'Node B.2.1', strategy: 'Default' } },
-    { data: { id: 'node-c', label: 'Node C', strategy: 'Default' } },
-    { data: { id: 'node-c-1', label: 'Node C.1', strategy: 'OnPush' } },
-    { data: { id: 'node-c-2', label: 'Node C.2', strategy: 'Default' } },
+const INITIAL_NODES = [
+    { id: 'app', label: 'AppComponent', strategy: 'Default' },
+    { id: 'graph1', label: 'GraphComponent 1', strategy: 'Default' },
+    { id: 'graph2', label: 'GraphComponent 2', strategy: 'Default' },
+    { id: 'panel', label: 'ControlPanel', strategy: 'Default' },
+    { id: 'node-a', label: 'Node A', strategy: 'Default' },
+    { id: 'node-a-1', label: 'Node A.1', strategy: 'Default' },
+    { id: 'node-a-2', label: 'Node A.2', strategy: 'OnPush' },
+    { id: 'node-b', label: 'Node B', strategy: 'OnPush' },
+    { id: 'node-b-1', label: 'Node B.1', strategy: 'Default' },
+    { id: 'node-b-1-1', label: 'Node B.1.1', strategy: 'Default' },
+    { id: 'node-b-2', label: 'Node B.2', strategy: 'OnPush' },
+    { id: 'node-b-2-1', label: 'Node B.2.1', strategy: 'Default' },
+    { id: 'node-c', label: 'Node C', strategy: 'Default' },
+    { id: 'node-c-1', label: 'Node C.1', strategy: 'OnPush' },
+    { id: 'node-c-2', label: 'Node C.2', strategy: 'Default' },
 
     // Graph 2 Nodes
-    { data: { id: 'node2-a', label: 'Node 2.A', strategy: 'Default' } },
-    { data: { id: 'node2-b', label: 'Node 2.B', strategy: 'OnPush' } },
-    { data: { id: 'node2-c', label: 'Node 2.C', strategy: 'Default' } },
+    { id: 'node2-a', label: 'Node 2.A', strategy: 'Default' },
+    { id: 'node2-b', label: 'Node 2.B', strategy: 'OnPush' },
+    { id: 'node2-c', label: 'Node 2.C', strategy: 'Default' },
 ];
 
-const INITIAL_EDGES: EdgeDefinition[] = [
-    { data: { id: 'e1', source: 'app', target: 'graph1' } },
-    { data: { id: 'e_g2', source: 'app', target: 'graph2' } },
-    { data: { id: 'e2', source: 'app', target: 'panel' } },
-    { data: { id: 'e3', source: 'graph1', target: 'node-a' } },
-    { data: { id: 'e4', source: 'graph1', target: 'node-b' } },
-    { data: { id: 'e5', source: 'graph1', target: 'node-c' } },
-    { data: { id: 'e6', source: 'node-b', target: 'node-b-1' } },
-    { data: { id: 'e7', source: 'node-b', target: 'node-b-2' } },
-    { data: { id: 'e8', source: 'node-a', target: 'node-a-1' } },
-    { data: { id: 'e9', source: 'node-a', target: 'node-a-2' } },
-    { data: { id: 'e10', source: 'node-b-1', target: 'node-b-1-1' } },
-    { data: { id: 'e11', source: 'node-b-2', target: 'node-b-2-1' } },
-    { data: { id: 'e12', source: 'node-c', target: 'node-c-1' } },
-    { data: { id: 'e13', source: 'node-c', target: 'node-c-2' } },
+const INITIAL_EDGES = [
+    { source: 'app', target: 'graph1' },
+    { source: 'app', target: 'graph2' },
+    { source: 'app', target: 'panel' },
+    { source: 'graph1', target: 'node-a' },
+    { source: 'graph1', target: 'node-b' },
+    { source: 'graph1', target: 'node-c' },
+    { source: 'node-b', target: 'node-b-1' },
+    { source: 'node-b', target: 'node-b-2' },
+    { source: 'node-a', target: 'node-a-1' },
+    { source: 'node-a', target: 'node-a-2' },
+    { source: 'node-b-1', target: 'node-b-1-1' },
+    { source: 'node-b-2', target: 'node-b-2-1' },
+    { source: 'node-c', target: 'node-c-1' },
+    { source: 'node-c', target: 'node-c-2' },
 
-    { data: { id: 'e2-3', source: 'graph2', target: 'node2-a' } },
-    { data: { id: 'e2-4', source: 'graph2', target: 'node2-b' } },
-    { data: { id: 'e2-5', source: 'graph2', target: 'node2-c' } },
+    { source: 'graph2', target: 'node2-a' },
+    { source: 'graph2', target: 'node2-b' },
+    { source: 'graph2', target: 'node2-c' },
 ];
-
-const CY_STYLES: StylesheetStyle[] = [
-    {
-        selector: 'node',
-        style: {
-            'background-color': '#3b82f6',
-            'border-width': 2,
-            'border-color': '#1d4ed8',
-            label: 'data(label)',
-            color: '#fff',
-            'font-size': '11px',
-            'font-family': 'Roboto, sans-serif',
-            'text-valign': 'center',
-            'text-halign': 'center',
-            width: 130,
-            height: 44,
-            shape: 'round-rectangle',
-        },
-    },
-    {
-        // Ноды с OnPush отображаются другим цветом в состоянии покоя
-        selector: 'node[strategy = "OnPush"]',
-        style: { 'background-color': '#7c3aed', 'border-color': '#5b21b6' },
-    },
-    {
-        selector: 'node.highlighted',
-        style: {
-            'background-color': '#22c55e',
-            'border-color': '#15803d',
-            'transition-property': 'background-color, border-color',
-            'transition-duration': '200ms',
-        } as Record<string, unknown>,
-    },
-    {
-        selector: 'node.stale',
-        style: {
-            'background-color': '#ef4444',
-            'border-color': '#b91c1c',
-            'transition-property': 'background-color, border-color',
-            'transition-duration': '200ms',
-        } as Record<string, unknown>,
-    },
-    {
-        selector: 'edge',
-        style: {
-            width: 2,
-            'line-color': '#475569',
-            'target-arrow-color': '#475569',
-            'target-arrow-shape': 'triangle',
-            'curve-style': 'bezier',
-        },
-    },
-    {
-        selector: '.hidden',
-        style: {
-            display: 'none',
-        } as Record<string, unknown>,
-    },
-];
-
-// ─── Компонент ───────────────────────────────────────────────────────────────
 
 /**
- * `GraphComponent` — тонкая Angular-обёртка над экземпляром Cytoscape.js.
+ * `GraphComponent` — тонкая Angular-обёртка над экземпляром G6.
  *
  * Жизненный цикл:
- * 1. `afterNextRender` → инициализирует Cytoscape после первого рендера в DOM.
+ * 1. `afterNextRender` → инициализирует G6 после первого рендера в DOM.
  * 2. `effect()` реагирует на `CdTrackerService.lastEvent` → вызывает `highlightNode`.
  *
- * Всё взаимодействие с DOM происходит через API Cytoscape, поэтому компонент
+ * Всё взаимодействие с DOM происходит через API G6, поэтому компонент
  * никогда не касается конвейера рендеринга Angular после первой отрисовки.
  */
 @Component({
@@ -144,22 +79,19 @@ const CY_STYLES: StylesheetStyle[] = [
 export class GraphComponent implements OnDestroy {
     private readonly tracker = inject(CdTrackerService);
     private readonly destroyRef = inject(DestroyRef);
-    private cy: Core | null = null;
+    private graph: Graph | null = null;
     private readonly flashTimers = new Map<string, ReturnType<typeof setTimeout>>();
 
-    /** Ссылка на шаблонный элемент — точка монтирования Cytoscape */
-    readonly cyContainer = viewChild.required<ElementRef<HTMLDivElement>>('cyContainer');
+    /** Ссылка на шаблонный элемент — точка монтирования G6 */
+    readonly graphContainer = viewChild.required<ElementRef<HTMLDivElement>>('graphContainer');
 
-    /** Флаг: был ли Cytoscape уже инициализирован */
     readonly ready = signal(false);
 
     constructor() {
-        // Инициализируем Cytoscape после первого рендера (только в браузере)
         afterNextRender(() => {
-            this.initCytoscape();
+            this.initGraph();
         });
 
-        // Реагируем на каждый новый CD-евент и подсвечиваем соответствующую ноду
         effect(() => {
             const event = this.tracker.lastEvent();
             if (event && this.ready()) {
@@ -182,75 +114,208 @@ export class GraphComponent implements OnDestroy {
 
     // ── Публичное API (вызывается родителем / тестами) ───────────────────────────
 
-    /** Обновляет метку стратегии на ноде и переприменяет визуальные классы */
     setNodeStrategy(nodeId: string, strategy: CdStrategy): void {
-        if (!this.cy) return;
-        const node = this.cy.$(`#${nodeId}`);
-        node.data('strategy', strategy);
+        if (!this.graph) return;
+        const item = this.graph.findById(nodeId);
+        if (!item) return;
+
+        this.graph.updateItem(item, { strategy });
+
         if (strategy === 'OnPush') {
-            node.addClass('onpush');
+            this.graph.setItemState(item, 'onpush', true);
         } else {
-            node.removeClass('onpush');
+            this.graph.setItemState(item, 'onpush', false);
         }
     }
 
     setNodeVisibility(nodeId: string, isVisible: boolean): void {
-        if (!this.cy) return;
-        const node = this.cy.$(`#${nodeId}`);
-        const successors = node.successors(); // Gets descendants and edges
+        if (!this.graph) return;
 
-        if (isVisible) {
-            successors.removeClass('hidden');
-        } else {
-            successors.addClass('hidden');
-        }
+        // Рекурсивно скрываем/показываем узел и всех его потомков
+        const toggleNodeAndDescendants = (nId: string, visible: boolean) => {
+            const item = this.graph?.findById(nId);
+            if (!item || item.destroyed || item.getType() !== 'node') return;
+
+            const node = item as any; // Type-cast to any to bypass TS Item interface constraints
+            if (visible) {
+                node.show();
+                node.getEdges().forEach((e: any) => e.show());
+            } else {
+                node.hide();
+                node.getEdges().forEach((e: any) => e.hide());
+            }
+
+            // Перебираем всех детей по исходящим рёбрам
+            node.getOutEdges().forEach((edge: any) => {
+                const targetId = edge.getTarget().getID();
+                toggleNodeAndDescendants(targetId, visible);
+            });
+        };
+
+        toggleNodeAndDescendants(nodeId, isVisible);
+
+        // Перерисовываем лэйаут, если скрытие меняет дерево
+        this.graph.layout();
+
+        // Центрируем перед тем, как браузер физически отрисует новый кадр, 
+        // чтобы избежать визуального скачка длительностью 50мс
+        requestAnimationFrame(() => {
+            if (this.graph && !this.graph.destroyed) {
+                this.graph.fitCenter();
+            }
+        });
+    }
+
+
+    resetLayout(): void {
+        if (!this.graph) return;
+        this.graph.layout(); // Повторно считает layout и возвращает ноды на свои места
+
+        requestAnimationFrame(() => {
+            if (this.graph && !this.graph.destroyed) {
+                this.graph.fitCenter();
+            }
+        });
     }
 
     // ── Приватные вспомогательные методы ─────────────────────────────────────────
 
-    private initCytoscape(): void {
-        this.cy = cytoscape({
-            container: this.cyContainer().nativeElement,
-            elements: {
-                nodes: INITIAL_NODES,
-                edges: INITIAL_EDGES,
-            },
-            style: CY_STYLES,
-            layout: {
-                name: 'dagre',
-                rankDir: 'TB',
-                nodeSep: 40,
-                rankSep: 60,
-                padding: 30,
-                fit: true,
-            } as cytoscape.LayoutOptions,
-            userZoomingEnabled: true,
-            userPanningEnabled: true,
-            minZoom: 0.4,
+    private initGraph(): void {
+        const container = this.graphContainer().nativeElement;
+        const width = container.clientWidth || 800;
+        const height = container.clientHeight || 600;
+
+        this.graph = new G6.Graph({
+            container: container,
+            width,
+            height,
+            fitView: true,
+            fitCenter: true,
+            minZoom: 0.2,
             maxZoom: 2.5,
+            modes: {
+                default: ['drag-node'], // drag-node - перетаскивание узлов
+            },
+            layout: {
+                type: 'dagre',
+                rankdir: 'TB',
+                nodesep: 10, // Отступы между узлами в одном уровне
+                ranksep: 20, // Отступы между уровнями
+                controlPoints: true,
+            },
+            defaultNode: {
+                type: 'rect',
+                size: [160, 52],
+                anchorPoints: [
+                    [0.5, 0], // вход сверху
+                    [0.5, 1], // выход снизу
+                ],
+                style: {
+                    radius: 8,
+                    fill: '#3b82f6',
+                    stroke: '#1d4ed8',
+                    lineWidth: 2,
+                },
+                labelCfg: {
+                    style: {
+                        fill: '#fff',
+                        fontSize: 13,
+                        fontFamily: 'Roboto, sans-serif',
+                        fontWeight: 500,
+                    },
+                },
+            },
+            defaultEdge: {
+                type: 'polyline',
+                style: {
+                    radius: 12,
+                    offset: 20,
+                    stroke: '#475569',
+                    lineWidth: 2,
+                    endArrow: {
+                        path: G6.Arrow.triangle(8, 10, 0),
+                        fill: '#475569',
+                        d: 0,
+                    },
+                },
+            },
+            nodeStateStyles: {
+                onpush: {
+                    fill: '#7c3aed',
+                    stroke: '#5b21b6',
+                },
+                highlighted: {
+                    fill: '#22c55e',
+                    stroke: '#15803d',
+                },
+                stale: {
+                    fill: '#ef4444',
+                    stroke: '#b91c1c',
+                },
+            },
         });
+
+        const processedNodes = INITIAL_NODES.map(node => ({ ...node }));
+
+        this.graph.data({
+            nodes: processedNodes,
+            edges: INITIAL_EDGES,
+        });
+
+        this.graph.render();
+
+        processedNodes.forEach(node => {
+            if (node.strategy === 'OnPush') {
+                const item = this.graph!.findById(node.id);
+                if (item) {
+                    this.graph!.setItemState(item, 'onpush', true);
+                }
+            }
+        });
+
+        if (typeof window !== 'undefined') {
+            window.addEventListener('resize', this.onResize);
+        }
 
         this.ready.set(true);
     }
 
+    private onResize = () => {
+        if (!this.graph || !this.graphContainer) return;
+        const container = this.graphContainer().nativeElement;
+        this.graph.changeSize(container.clientWidth || 800, container.clientHeight || 600);
+        this.graph.fitCenter();
+    };
+
     private highlightNode(event: CdEvent): void {
-        if (!this.cy) return;
+        if (!this.graph) return;
 
-        const node = this.cy.$(`#${event.nodeId}`);
-        if (!node || node.length === 0) return;
+        const item = this.graph.findById(event.nodeId);
+        if (!item || item.destroyed) return;
 
-        // Отменяем предыдущую подсветку, если она ещё не завершилась
         const existing = this.flashTimers.get(event.nodeId);
         if (existing) clearTimeout(existing);
 
-        node.removeClass('stale').addClass('highlighted');
+        const fadeExisting = this.flashTimers.get(`${event.nodeId}_fade`);
+        if (fadeExisting) clearTimeout(fadeExisting);
+
+        this.graph.setItemState(item, 'stale', false);
+        this.graph.setItemState(item, 'highlighted', true);
 
         const timer = setTimeout(() => {
-            node.removeClass('highlighted').addClass('stale');
+            if (!this.graph) return;
+            const currentItem = this.graph.findById(event.nodeId);
+            if (!currentItem || currentItem.destroyed) return;
 
-            // Плавное возвращение к базовому цвету после второй задержки
+            this.graph.setItemState(currentItem, 'highlighted', false);
+            this.graph.setItemState(currentItem, 'stale', true);
+
             const fadeTimer = setTimeout(() => {
-                node.removeClass('stale');
+                if (!this.graph) return;
+                const fi = this.graph.findById(event.nodeId);
+                if (!fi || fi.destroyed) return;
+
+                this.graph.setItemState(fi, 'stale', false);
                 this.flashTimers.delete(event.nodeId);
             }, 600);
 
@@ -262,8 +327,11 @@ export class GraphComponent implements OnDestroy {
 
     ngOnDestroy(): void {
         this.flashTimers.forEach(t => clearTimeout(t));
-        this.cy?.destroy();
-        this.cy = null;
+        if (typeof window !== 'undefined') {
+            window.removeEventListener('resize', this.onResize);
+        }
+        this.graph?.destroy();
+        this.graph = null;
     }
 
     protected trackRender(): string {

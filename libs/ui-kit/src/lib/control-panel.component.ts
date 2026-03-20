@@ -4,7 +4,7 @@ import {
   output,
   untracked,
 } from '@angular/core';
-import { CdStrategy, CdTrackerService, EventTrigger } from '@cd-viz/data-access';
+import { CdTrackerService, EventTrigger } from '@cd-viz/data-access';
 import { TuiButton } from '@taiga-ui/core';
 
 const TRIGGER_ICON: Record<string, string> = {
@@ -37,7 +37,6 @@ export class ControlPanelComponent {
   protected readonly tracker = inject(CdTrackerService);
 
   readonly triggerEvent = output<EventTrigger>();
-  readonly strategyChange = output<CdStrategy>();
 
   /** События в обратном порядке (новые сверху) */
   protected readonly reversedEvents = () =>

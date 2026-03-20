@@ -1,6 +1,4 @@
 import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
   Component, computed,
   inject, signal,
   untracked,
@@ -34,11 +32,7 @@ export class AppComponent {
   public strategyDynamic = signal<CdStrategy>('OnPush');
   public nodeBLabel = computed(() => `Node B — ${this.strategyDynamic()}`)
 
-  private readonly cdr = inject(ChangeDetectorRef);
   private readonly tracker = inject(CdTrackerService);
-
-  /** Прямая ссылка на GraphComponent для обновления стратегии */
-  private readonly graphRef = viewChild<GraphComponent>('graphRef');
 
   private readonly nodeA = viewChild<CdNodeComponent>('nodeA');
   private readonly nodeB = viewChild<CdNodeComponent>('nodeB');
@@ -69,21 +63,6 @@ export class AppComponent {
         this.node2C()?.simulateTrigger(trigger);
       });
     }
-  }
-
-  /** Вызывается ControlPanel; обновляет стратегию на нодах графа */
-  onStrategyChange(strategy: CdStrategy): void {
-    const graph = this.graphRef();
-
-    this.strategyDynamic.set(strategy);
-
-    // Применяем визуально только к node-b (демо-нода с OnPush)
-    graph?.setNodeStrategy('node-b', strategy);
-    graph?.setNodeStrategy('node2-b', strategy);
-
-    // Симулируем ре-рендер, чтобы показать что смена стратегии произошла
-    this.nodeB()?.simulateTrigger('signal');
-    this.node2B()?.simulateTrigger('signal');
   }
 
   setGraph1Strategy(strategy: CdStrategy | 'Reset'): void {
