@@ -9,5 +9,8 @@
       "executor": "@nx/eslint:lint"
     }
   },
-  "tags": ["scope:shared", "type:data-access"]
+  "tags": [
+    "scope:shared",
+    "type:data-access"
+  ]
 }

@@ -1,9 +1,4 @@
-import {
-  Component,
-  inject,
-  output,
-  untracked,
-} from '@angular/core';
+import { Component, inject, output, untracked } from '@angular/core';
 import { CdTrackerService, EventTrigger } from '@cd-viz/data-access';
 import { TuiButton } from '@taiga-ui/core';
 
@@ -39,8 +34,7 @@ export class ControlPanelComponent {
   readonly triggerEvent = output<EventTrigger>();
 
   /** События в обратном порядке (новые сверху) */
-  protected readonly reversedEvents = () =>
-    [...this.tracker.visibleEvents()].reverse();
+  protected readonly reversedEvents = () => [...this.tracker.visibleEvents()].reverse();
 
   protected triggerIcon(trigger: string): string {
     return TRIGGER_ICON[trigger] ?? '●';
@@ -77,7 +71,7 @@ export class ControlPanelComponent {
     if (events.length === 0) return;
 
     // Копируем ID узлов в буфер обмена
-    const text = events.map(e => e.nodeId).join('\n');
+    const text = events.map((e) => e.nodeId).join('\n');
 
     try {
       if (navigator.clipboard) {

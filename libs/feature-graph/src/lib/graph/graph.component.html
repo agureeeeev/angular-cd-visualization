@@ -1,29 +1,35 @@
 <div class="graph-wrapper">
-    {{ trackRender() }}
-    <button class="graph-reset-btn" (click)="resetLayout()" title="Reset graph layout">
-        ↺
-    </button>
-    <div #graphContainer class="graph-container"></div>
-    <div class="graph-legend">
-        <div class="graph-legend-item">
-            <span class="graph-legend-color"
-                style="background: var(--color-trigger-dom); border-color: #1d4ed8;"></span>
-            <span>Default (Idle)</span>
-        </div>
-        <div class="graph-legend-item">
-            <span class="graph-legend-color"
-                style="background: var(--color-strategy-onpush); border-color: #5b21b6;"></span>
-            <span>OnPush (Idle)</span>
-        </div>
-        <div class="graph-legend-item">
-            <span class="graph-legend-color graph-legend-color--flash"
-                style="background: var(--color-trigger-signal); border-color: #15803d;"></span>
-            <span>Checking</span>
-        </div>
-        <div class="graph-legend-item">
-            <span class="graph-legend-color graph-legend-color--fade"
-                style="background: #ef4444; border-color: #b91c1c;"></span>
-            <span>Checked</span>
-        </div>
+  {{ trackRender() }}
+  <button class="graph-reset-btn" (click)="resetLayout()" title="Reset graph layout">↺</button>
+  <div #graphContainer class="graph-container"></div>
+  <div class="graph-legend">
+    <div class="graph-legend-item">
+      <span
+        class="graph-legend-color"
+        style="background: var(--color-trigger-dom); border-color: #1d4ed8"
+      ></span>
+      <span>Default (Idle)</span>
     </div>
+    <div class="graph-legend-item">
+      <span
+        class="graph-legend-color"
+        style="background: var(--color-strategy-onpush); border-color: #5b21b6"
+      ></span>
+      <span>OnPush (Idle)</span>
+    </div>
+    <div class="graph-legend-item">
+      <span
+        class="graph-legend-color graph-legend-color--flash"
+        style="background: var(--color-trigger-signal); border-color: #15803d"
+      ></span>
+      <span>Checking</span>
+    </div>
+    <div class="graph-legend-item">
+      <span
+        class="graph-legend-color graph-legend-color--fade"
+        style="background: #ef4444; border-color: #b91c1c"
+      ></span>
+      <span>Checked</span>
+    </div>
+  </div>
 </div>

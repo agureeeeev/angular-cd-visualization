@@ -1,84 +1,95 @@
 {{ trackRender() }}
 <section class="panel">
-    <!-- Header -->
-    <header class="panel__header">
-        <h2 class="panel__title">Control Panel</h2>
-        <div class="panel__subtitle">Angular Change Detection</div>
-    </header>
+  <!-- Header -->
+  <header class="panel__header">
+    <h2 class="panel__title">Control Panel</h2>
+    <div class="panel__subtitle">Angular Change Detection</div>
+  </header>
 
-    <!-- Event triggers -->
-    <div class="panel__section">
-        <p class="panel__label">Trigger Event</p>
-        <div class="panel__btn-group panel__btn-group--col">
-            <button tuiButton size="s" appearance="glass" (click)="triggerEvent.emit('bootstrap')">
-                🚀 Bootstrap
-            </button>
-            <!-- Clear -->
-            <button tuiButton size="xs" appearance="destructive" (click)="clearHistory()">
-                Clear History
-            </button>
-        </div>
+  <!-- Event triggers -->
+  <div class="panel__section">
+    <p class="panel__label">Trigger Event</p>
+    <div class="panel__btn-group panel__btn-group--col">
+      <button tuiButton size="s" appearance="glass" (click)="triggerEvent.emit('bootstrap')">
+        🚀 Bootstrap
+      </button>
+      <!-- Clear -->
+      <button tuiButton size="xs" appearance="destructive" (click)="clearHistory()">
+        Clear History
+      </button>
+    </div>
+  </div>
+
+  <!-- Event log -->
+  <div class="panel__section panel__log-wrapper">
+    <div class="panel__log-header">
+      <p class="panel__label">
+        Live CD Events
+        @if (tracker.visibleEvents().length > 0) {
+          <span class="panel__label-count">({{ tracker.visibleEvents().length }})</span>
+        }
+      </p>
+      @if (tracker.events().length > 0) {
+        <button
+          tuiButton
+          size="xs"
+          appearance="outline"
+          (click)="copyQueue()"
+          class="panel__copy-btn"
+        >
+          📋 Copy
+        </button>
+      }
     </div>
 
-    <!-- Event log -->
-    <div class="panel__section panel__log-wrapper">
-        <div class="panel__log-header">
-            <p class="panel__label">
-                Live CD Events
-                @if (tracker.visibleEvents().length > 0) {
-                <span class="panel__label-count">({{ tracker.visibleEvents().length }})</span>
-                }
-            </p>
-            @if (tracker.events().length > 0) {
-            <button tuiButton size="xs" appearance="outline" (click)="copyQueue()" class="panel__copy-btn">
-                📋 Copy
-            </button>
-            }
-        </div>
-
-        <!-- Color Legend -->
-        <ul class="panel__legend">
-            <li class="panel__legend-item">
-                <span class="panel__legend-dot panel__legend-dot--dom"></span>
-                <span>🖱 DOM Event — click, input, etc.</span>
-            </li>
-            <li class="panel__legend-item">
-                <span class="panel__legend-dot panel__legend-dot--promise"></span>
-                <span>⏳ Promise — async task completion</span>
-            </li>
-            <li class="panel__legend-item">
-                <span class="panel__legend-dot panel__legend-dot--signal"></span>
-                <span>⚡ Signal — signal value update</span>
-            </li>
-            <li class="panel__legend-item">
-                <span class="panel__legend-dot panel__legend-dot--render"></span>
-                <span>🔄 Render — CD pass without clear trigger</span>
-            </li>
-            <li class="panel__legend-item">
-                <span class="panel__legend-dot panel__legend-dot--bootstrap"></span>
-                <span>🚀 Bootstrap — initial tree traversal</span>
-            </li>
-            <li class="panel__legend-item">
-                <span class="panel__legend-dot panel__legend-dot--onpush"></span>
-                <span>Dark Background — OnPush strategy</span>
-            </li>
-        </ul>
-        <ul class="panel__log">
-            @for (evt of reversedEvents(); track $index) {
-            <li class="panel__log-entry" [class.panel__log-entry--onpush]="evt.strategy === 'OnPush'"
-                [style.--trigger-color]="triggerColor(evt.trigger)">
-                <span class="panel__log-icon">{{ triggerIcon(evt.trigger) }}</span>
-                <span class="panel__log-node">{{ evt.nodeId }}</span>
-                <span class="panel__log-badges">
-                    <span class="panel__log-badge panel__log-badge--trigger">{{ evt.trigger }}</span>
-                    <span class="panel__log-badge" [class.panel__log-badge--onpush]="evt.strategy === 'OnPush'">{{
-                        evt.strategy
-                        }}</span>
-                </span>
-            </li>
-            } @empty {
-            <li class="panel__log-empty">No events yet — trigger one above.</li>
-            }
-        </ul>
-    </div>
+    <!-- Color Legend -->
+    <ul class="panel__legend">
+      <li class="panel__legend-item">
+        <span class="panel__legend-dot panel__legend-dot--dom"></span>
+        <span>🖱 DOM Event — click, input, etc.</span>
+      </li>
+      <li class="panel__legend-item">
+        <span class="panel__legend-dot panel__legend-dot--promise"></span>
+        <span>⏳ Promise — async task completion</span>
+      </li>
+      <li class="panel__legend-item">
+        <span class="panel__legend-dot panel__legend-dot--signal"></span>
+        <span>⚡ Signal — signal value update</span>
+      </li>
+      <li class="panel__legend-item">
+        <span class="panel__legend-dot panel__legend-dot--render"></span>
+        <span>🔄 Render — CD pass without clear trigger</span>
+      </li>
+      <li class="panel__legend-item">
+        <span class="panel__legend-dot panel__legend-dot--bootstrap"></span>
+        <span>🚀 Bootstrap — initial tree traversal</span>
+      </li>
+      <li class="panel__legend-item">
+        <span class="panel__legend-dot panel__legend-dot--onpush"></span>
+        <span>Dark Background — OnPush strategy</span>
+      </li>
+    </ul>
+    <ul class="panel__log">
+      @for (evt of reversedEvents(); track $index) {
+        <li
+          class="panel__log-entry"
+          [class.panel__log-entry--onpush]="evt.strategy === 'OnPush'"
+          [style.--trigger-color]="triggerColor(evt.trigger)"
+        >
+          <span class="panel__log-icon">{{ triggerIcon(evt.trigger) }}</span>
+          <span class="panel__log-node">{{ evt.nodeId }}</span>
+          <span class="panel__log-badges">
+            <span class="panel__log-badge panel__log-badge--trigger">{{ evt.trigger }}</span>
+            <span
+              class="panel__log-badge"
+              [class.panel__log-badge--onpush]="evt.strategy === 'OnPush'"
+              >{{ evt.strategy }}</span
+            >
+          </span>
+        </li>
+      } @empty {
+        <li class="panel__log-empty">No events yet — trigger one above.</li>
+      }
+    </ul>
+  </div>
 </section>

@@ -43,13 +43,24 @@
     },
     "devDependencies": {
         "@angular-devkit/build-angular": "~21.0.0",
+        "@angular-eslint/builder": "~18.0.0",
+        "@angular-eslint/eslint-plugin": "~18.0.0",
+        "@angular-eslint/eslint-plugin-template": "~18.0.0",
+        "@angular-eslint/template-parser": "~18.0.0",
         "@angular/cli": "~21.0.0",
         "@angular/compiler-cli": "~21.0.0",
         "@nx/angular": "^20.0.0",
         "@nx/eslint": "^20.0.0",
+        "@nx/eslint-plugin": "^20.0.0",
         "@nx/js": "^20.0.0",
         "@types/node": "~18.16.9",
+        "@typescript-eslint/eslint-plugin": "^7.16.0",
+        "@typescript-eslint/parser": "^7.16.0",
+        "eslint": "~8.57.0",
+        "eslint-config-prettier": "^9.0.0",
+        "eslint-plugin-prettier": "^5.0.0",
         "nx": "^20.0.0",
+        "prettier": "^3.0.0",
         "typescript": "~5.9.0"
     }
 }

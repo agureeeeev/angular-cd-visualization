@@ -1,71 +1,126 @@
 {{ trackRender() }}
 <tui-root>
-    <div class="app-layout">
-        <!-- Левая колонка -->
-        <div class="app-left">
-            <!-- Холст Cytoscape (ЕДИНЫЙ для всей диаграммы) -->
-            <div class="graph-panel">
-                <cd-graph #graphRef />
-            </div>
+  <div class="app-layout">
+    <!-- Левая колонка -->
+    <div class="app-left">
+      <!-- Холст Cytoscape (ЕДИНЫЙ для всей диаграммы) -->
+      <div class="graph-panel">
+        <cd-graph #graphRef />
+      </div>
 
-            <!-- Группа карточек разделена на 2 блока для визуального удобства -->
-            <div class="app-graphs-container">
-                <div class="nodes-row nodes-row--bordered">
-                    <div class="nodes-row-header">
-                        <div class="nodes-row-title">Graph 1 Nodes</div>
-                        <div class="nodes-row-actions">
-                            <button tuiButton size="xs" appearance="secondary" class="nodes-action-btn"
-                                (click)="setGraph1Strategy('Default')">All Default</button>
-                            <button tuiButton size="xs" appearance="secondary" class="nodes-action-btn"
-                                (click)="setGraph1Strategy('OnPush')">All OnPush</button>
-                            <button tuiButton size="xs" appearance="secondary" class="nodes-action-btn"
-                                (click)="setGraph1Strategy('Reset')">Reset</button>
-                        </div>
-                    </div>
-                    {{ trackGraph1() }}
-                    {{ evaluateGraph1Nodes() }}
-                    <cd-node #nodeA nodeId="node-a" label="Node A — Default" strategy="Default">
-                        <cd-node nodeId="node-a-1" label="Node A.1 — Default" strategy="Default"></cd-node>
-                        <cd-node nodeId="node-a-2" label="Node A.2 — OnPush" strategy="OnPush"></cd-node>
-                    </cd-node>
-                    <cd-node #nodeB nodeId="node-b" [label]="nodeBLabel()" [strategy]="strategyDynamic()">
-                        <cd-node nodeId="node-b-1" label="Node B.1 — Default" strategy="Default">
-                            <cd-node nodeId="node-b-1-1" label="Node B.1.1 — Default" strategy="Default"></cd-node>
-                        </cd-node>
-                        <cd-node nodeId="node-b-2" label="Node B.2 — OnPush" strategy="OnPush">
-                            <cd-node nodeId="node-b-2-1" label="Node B.2.1 — Default" strategy="Default"></cd-node>
-                        </cd-node>
-                    </cd-node>
-                    <cd-node #nodeC nodeId="node-c" label="Node C — Default" strategy="Default">
-                        <cd-node nodeId="node-c-1" label="Node C.1 — OnPush" strategy="OnPush"></cd-node>
-                        <cd-node nodeId="node-c-2" label="Node C.2 — Default" strategy="Default"></cd-node>
-                    </cd-node>
-                </div>
-
-                <div class="nodes-row">
-                    <div class="nodes-row-header">
-                        <div class="nodes-row-title">Graph 2 Nodes</div>
-                        <div class="nodes-row-actions">
-                            <button tuiButton size="xs" appearance="secondary" class="nodes-action-btn"
-                                (click)="setGraph2Strategy('Default')">All Default</button>
-                            <button tuiButton size="xs" appearance="secondary" class="nodes-action-btn"
-                                (click)="setGraph2Strategy('OnPush')">All OnPush</button>
-                            <button tuiButton size="xs" appearance="secondary" class="nodes-action-btn"
-                                (click)="setGraph2Strategy('Reset')">Reset</button>
-                        </div>
-                    </div>
-                    {{ trackGraph2() }}
-                    {{ evaluateGraph2Nodes() }}
-                    <cd-node #node2A nodeId="node2-a" label="Node 2.A — Default" strategy="Default"></cd-node>
-                    <cd-node #node2B nodeId="node2-b" [label]="nodeBLabel()" [strategy]="strategyDynamic()"></cd-node>
-                    <cd-node #node2C nodeId="node2-c" label="Node 2.C — Default" strategy="Default"></cd-node>
-                </div>
+      <!-- Группа карточек разделена на 2 блока для визуального удобства -->
+      <div class="app-graphs-container">
+        <div class="nodes-row nodes-row--bordered">
+          <div class="nodes-row-header">
+            <div class="nodes-row-title">Graph 1 Nodes</div>
+            <div class="nodes-row-actions">
+              <button
+                tuiButton
+                size="xs"
+                appearance="secondary"
+                class="nodes-action-btn"
+                (click)="setGraph1Strategy('Default')"
+              >
+                All Default
+              </button>
+              <button
+                tuiButton
+                size="xs"
+                appearance="secondary"
+                class="nodes-action-btn"
+                (click)="setGraph1Strategy('OnPush')"
+              >
+                All OnPush
+              </button>
+              <button
+                tuiButton
+                size="xs"
+                appearance="secondary"
+                class="nodes-action-btn"
+                (click)="setGraph1Strategy('Reset')"
+              >
+                Reset
+              </button>
             </div>
+          </div>
+          {{ trackGraph1() }}
+          {{ evaluateGraph1Nodes() }}
+          <cd-node #nodeA nodeId="node-a" label="Node A — Default" strategy="Default">
+            <cd-node nodeId="node-a-1" label="Node A.1 — Default" strategy="Default"></cd-node>
+            <cd-node nodeId="node-a-2" label="Node A.2 — OnPush" strategy="OnPush"></cd-node>
+          </cd-node>
+          <cd-node #nodeB nodeId="node-b" [label]="nodeBLabel()" [strategy]="strategyDynamic()">
+            <cd-node nodeId="node-b-1" label="Node B.1 — Default" strategy="Default">
+              <cd-node
+                nodeId="node-b-1-1"
+                label="Node B.1.1 — Default"
+                strategy="Default"
+              ></cd-node>
+            </cd-node>
+            <cd-node nodeId="node-b-2" label="Node B.2 — OnPush" strategy="OnPush">
+              <cd-node
+                nodeId="node-b-2-1"
+                label="Node B.2.1 — Default"
+                strategy="Default"
+              ></cd-node>
+            </cd-node>
+          </cd-node>
+          <cd-node #nodeC nodeId="node-c" label="Node C — Default" strategy="Default">
+            <cd-node nodeId="node-c-1" label="Node C.1 — OnPush" strategy="OnPush"></cd-node>
+            <cd-node nodeId="node-c-2" label="Node C.2 — Default" strategy="Default"></cd-node>
+          </cd-node>
         </div>
 
-        <!-- Правая колонка (панель управления) -->
-        <aside class="app-right">
-            <cd-control-panel (triggerEvent)="onTriggerEvent($event)" />
-        </aside>
+        <div class="nodes-row">
+          <div class="nodes-row-header">
+            <div class="nodes-row-title">Graph 2 Nodes</div>
+            <div class="nodes-row-actions">
+              <button
+                tuiButton
+                size="xs"
+                appearance="secondary"
+                class="nodes-action-btn"
+                (click)="setGraph2Strategy('Default')"
+              >
+                All Default
+              </button>
+              <button
+                tuiButton
+                size="xs"
+                appearance="secondary"
+                class="nodes-action-btn"
+                (click)="setGraph2Strategy('OnPush')"
+              >
+                All OnPush
+              </button>
+              <button
+                tuiButton
+                size="xs"
+                appearance="secondary"
+                class="nodes-action-btn"
+                (click)="setGraph2Strategy('Reset')"
+              >
+                Reset
+              </button>
+            </div>
+          </div>
+          {{ trackGraph2() }}
+          {{ evaluateGraph2Nodes() }}
+          <cd-node #node2A nodeId="node2-a" label="Node 2.A — Default" strategy="Default"></cd-node>
+          <cd-node
+            #node2B
+            nodeId="node2-b"
+            [label]="nodeBLabel()"
+            [strategy]="strategyDynamic()"
+          ></cd-node>
+          <cd-node #node2C nodeId="node2-c" label="Node 2.C — Default" strategy="Default"></cd-node>
+        </div>
+      </div>
     </div>
+
+    <!-- Правая колонка (панель управления) -->
+    <aside class="app-right">
+      <cd-control-panel (triggerEvent)="onTriggerEvent($event)" />
+    </aside>
+  </div>
 </tui-root>

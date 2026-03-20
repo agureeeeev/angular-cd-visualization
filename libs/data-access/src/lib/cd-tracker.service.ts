@@ -28,7 +28,7 @@ export interface CdEvent {
 @Injectable({ providedIn: 'root' })
 export class CdTrackerService {
   private static readonly REVEAL_INTERVAL = 750; // ms between each revealed event
-  private static readonly MAX_VISIBLE = 30;       // keep at most this many in the log
+  private static readonly MAX_VISIBLE = 30; // keep at most this many in the log
 
   private readonly _allEvents = signal<CdEvent[]>([]);
   private readonly _visibleEvents = signal<CdEvent[]>([]);
@@ -49,14 +49,16 @@ export class CdTrackerService {
     return evts.length > 0 ? evts[evts.length - 1] : null;
   });
 
-  readonly strategyChanges$ = new Subject<{ nodeId: string, strategy: CdStrategy }>();
-  readonly visibilityChanges$ = new Subject<{ nodeId: string, isVisible: boolean }>();
+  readonly strategyChanges$ = new Subject<{ nodeId: string; strategy: CdStrategy }>();
+  readonly visibilityChanges$ = new Subject<{ nodeId: string; isVisible: boolean }>();
 
   // ── Публичное API ──────────────────────────────────────────────────────────
 
   currentTrigger: EventTrigger | null = null;
   private _isTrackingActive = false;
-  get isTrackingActive(): boolean { return this._isTrackingActive; }
+  get isTrackingActive(): boolean {
+    return this._isTrackingActive;
+  }
   private _trackedThisCycle = new Set<string>();
 
   startCycle(trigger: EventTrigger): void {
@@ -83,11 +85,11 @@ export class CdTrackerService {
     const fullEvent: CdEvent = {
       ...event,
       trigger: event.trigger ?? this.currentTrigger ?? 'render',
-      timestamp: Date.now()
+      timestamp: Date.now(),
     };
 
     // Добавляем в рав хисторию сразу (для счётчика бейджа)
-    this._allEvents.update(evts => [...evts.slice(-199), fullEvent]);
+    this._allEvents.update((evts) => [...evts.slice(-199), fullEvent]);
 
     // Помещаем в очередь для постепенного визуального отображения
     this._queue.push(fullEvent);
@@ -124,7 +126,7 @@ export class CdTrackerService {
         return;
       }
       const next = this._queue.shift()!;
-      this._visibleEvents.update(evts => [
+      this._visibleEvents.update((evts) => [
         ...evts.slice(-(CdTrackerService.MAX_VISIBLE - 1)),
         next,
       ]);

@@ -2,42 +2,72 @@
 {{ trackRender() }}
 
 <div class="node-card" [class.onpush]="strategy() === 'OnPush'">
-    <div class="node-card__header">
-        <span class="node-card__id">{{ nodeId() }}</span>
-        <div class="node-card__actions">
-            <span tuiBadge [appearance]="strategy() === 'OnPush' ? 'primary' : 'neutral'" size="s"
-                (click)="toggleStrategy()" class="node-card__action-badge" title="Toggle Strategy">
-                {{ strategy() }}
-            </span>
-            <button tuiButton type="button" size="xs" appearance="glass" class="node-card__action-btn"
-                (click)="toggleVisibility()">
-                {{ isCollapsed() ? 'Expand' : 'Collapse' }}
-            </button>
-        </div>
+  <div class="node-card__header">
+    <span class="node-card__id">{{ nodeId() }}</span>
+    <div class="node-card__actions">
+      <span
+        tuiBadge
+        [appearance]="strategy() === 'OnPush' ? 'primary' : 'neutral'"
+        size="s"
+        (click)="toggleStrategy()"
+        class="node-card__action-badge"
+        title="Toggle Strategy"
+      >
+        {{ strategy() }}
+      </span>
+      <button
+        tuiButton
+        type="button"
+        size="xs"
+        appearance="glass"
+        class="node-card__action-btn"
+        (click)="toggleVisibility()"
+      >
+        {{ isCollapsed() ? 'Expand' : 'Collapse' }}
+      </button>
     </div>
-    <div class="node-card__body">
-        <strong>{{ label() }}</strong>
-        <div class="node-card__triggers">
-            <button tuiButton type="button" size="xs" appearance="outline" class="node-card__trigger-btn"
-                (click)="simulateTrigger('dom')">
-                Event
-            </button>
-            <button tuiButton type="button" size="xs" appearance="outline" class="node-card__trigger-btn"
-                (click)="triggerPromise()">
-                Promise
-            </button>
-            <button tuiButton type="button" size="xs" appearance="outline" class="node-card__trigger-btn"
-                (click)="simulateTrigger('signal')">
-                Signal
-            </button>
-        </div>
+  </div>
+  <div class="node-card__body">
+    <strong>{{ label() }}</strong>
+    <div class="node-card__triggers">
+      <button
+        tuiButton
+        type="button"
+        size="xs"
+        appearance="outline"
+        class="node-card__trigger-btn"
+        (click)="simulateTrigger('dom')"
+      >
+        Event
+      </button>
+      <button
+        tuiButton
+        type="button"
+        size="xs"
+        appearance="outline"
+        class="node-card__trigger-btn"
+        (click)="triggerPromise()"
+      >
+        Promise
+      </button>
+      <button
+        tuiButton
+        type="button"
+        size="xs"
+        appearance="outline"
+        class="node-card__trigger-btn"
+        (click)="simulateTrigger('signal')"
+      >
+        Signal
+      </button>
     </div>
-    @if (children().length > 0 || true) {
+  </div>
+  @if (children().length > 0 || true) {
     @if (!isCollapsed()) {
-    <div class="node-card__children">
+      <div class="node-card__children">
         {{ evaluateChildrenSync() }}
         <ng-content></ng-content>
-    </div>
+      </div>
     }
-    }
+  }
 </div>

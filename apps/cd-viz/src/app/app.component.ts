@@ -1,9 +1,4 @@
-import {
-  Component, computed,
-  inject, signal,
-  untracked,
-  viewChild,
-} from '@angular/core';
+import { Component, computed, inject, signal, untracked, viewChild } from '@angular/core';
 import { TuiRoot, TuiButton } from '@taiga-ui/core';
 import { GraphComponent } from '@cd-viz/feature-graph';
 import { CdNodeComponent } from '@cd-viz/feature-graph';
@@ -30,7 +25,7 @@ import { CdStrategy, CdTrackerService, EventTrigger } from '@cd-viz/data-access'
 })
 export class AppComponent {
   public strategyDynamic = signal<CdStrategy>('OnPush');
-  public nodeBLabel = computed(() => `Node B — ${this.strategyDynamic()}`)
+  public nodeBLabel = computed(() => `Node B — ${this.strategyDynamic()}`);
 
   private readonly tracker = inject(CdTrackerService);
 
@@ -67,7 +62,7 @@ export class AppComponent {
 
   setGraph1Strategy(strategy: CdStrategy | 'Reset'): void {
     const nodes = [this.nodeA(), this.nodeB(), this.nodeC()];
-    nodes.forEach(n => {
+    nodes.forEach((n) => {
       if (strategy === 'Reset') n?.resetStrategyRecursive();
       else n?.setStrategyRecursive(strategy);
     });
@@ -75,7 +70,7 @@ export class AppComponent {
 
   setGraph2Strategy(strategy: CdStrategy | 'Reset'): void {
     const nodes = [this.node2A(), this.node2B(), this.node2C()];
-    nodes.forEach(n => {
+    nodes.forEach((n) => {
       if (strategy === 'Reset') n?.resetStrategyRecursive();
       else n?.setStrategyRecursive(strategy);
     });
@@ -141,7 +136,7 @@ export class AppComponent {
   protected evaluateGraph1Nodes(): string {
     const cycleTrigger = this.tracker.currentTrigger;
     const trigger = cycleTrigger === 'bootstrap' ? 'bootstrap' : 'render';
-    [this.nodeA(), this.nodeB(), this.nodeC()].forEach(node => {
+    [this.nodeA(), this.nodeB(), this.nodeC()].forEach((node) => {
       if (node?.strategy() === 'Default' || cycleTrigger === 'bootstrap' || node?.isDirtySpine) {
         node.performSyncIvyTraversal(trigger);
       }
@@ -152,7 +147,7 @@ export class AppComponent {
   protected evaluateGraph2Nodes(): string {
     const cycleTrigger = this.tracker.currentTrigger;
     const trigger = cycleTrigger === 'bootstrap' ? 'bootstrap' : 'render';
-    [this.node2A(), this.node2B(), this.node2C()].forEach(node => {
+    [this.node2A(), this.node2B(), this.node2C()].forEach((node) => {
       if (node?.strategy() === 'Default' || cycleTrigger === 'bootstrap' || node?.isDirtySpine) {
         node.performSyncIvyTraversal(trigger);
       }
